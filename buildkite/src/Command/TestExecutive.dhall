@@ -47,16 +47,7 @@ in
               Cmd.run "cat ${deployEnv}",
 
               -- Execute test based on BUILD image
-              Cmd.run (
-                "source ${deployEnv}" ++
-                " && set -o pipefail" ++
-                " && ./test_executive.exe cloud" ++
-                " --coda-image gcr.io/o1labs-192920/coda-daemon-puppeteered:\\\\\$CODA_VERSION-\\\\\$CODA_GIT_HASH" ++
-                " --coda-automation-location ./automation" ++
-                " ${testName}" ++
-                " | tee ${testName}.test.log" ++
-                " | coda-logproc -i inline -f '!(.level in [\"Debug\", \"Spam\"])'"
-              )
+              Cmd.run "source ${deployEnv} && ./buildkite/scripts/run-test-executive.sh ${testName}"
             ],
         artifact_paths = [SelectFiles.exactly "." "${testName}.test.log"],
         label = "Execute integration test: ${testName}",
