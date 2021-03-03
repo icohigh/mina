@@ -44,13 +44,14 @@ in
               -- Download test dependencies
               Cmd.run "artifact-cache-helper.sh test_executive.exe && chmod +x test_executive.exe",
               Cmd.run "artifact-cache-helper.sh ${deployEnv}",
+              Cmd.run "cat ${deployEnv}",
 
               -- Execute test based on BUILD image
               Cmd.run (
                 "source ${deployEnv}" ++
                 " && set -o pipefail" ++
                 " && ./test_executive.exe cloud" ++
-                " --coda-image gcr.io/o1labs-192920/coda-daemon:\\\$CODA_VERSION-\\\$CODA_GIT_HASH" ++
+                " --coda-image gcr.io/o1labs-192920/coda-daemon-puppeteered:\\\$CODA_VERSION-\\\$CODA_GIT_HASH" ++
                 " --coda-automation-location ./automation" ++
                 " ${testName}" ++
                 " | tee ${testName}.test.log" ++
