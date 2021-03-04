@@ -1,0 +1,73 @@
+[
+  {
+    "terraform": {
+      "required_version": ">= 0.12.0",
+      "backend": {
+        "s3": {
+          "key": "terraform-natha-0b9944aa-bootstrap-4331.tfstate",
+          "encrypt": true,
+          "region": "us-west-2",
+          "bucket": "o1labs-terraform-state",
+          "acl": "bucket-owner-full-control"
+        }
+      }
+    }
+  },
+  { "provider": { "aws": { "region": "us-west-2" } } },
+  {
+    "provider": {
+      "google": {
+        "region": "us-west1",
+        "project": "o1labs-192920",
+        "zone": "us-west1a"
+      }
+    }
+  },
+  {
+    "module": {
+      "integration_testnet": {
+        "providers": { "google.gke": "google" },
+        "source": "../../modules/o1-integration",
+        "k8s_context": "gke_o1labs-192920_us-west1_mina-integration-west1",
+        "cluster_name": "mina-integration-west1",
+        "cluster_region": "us-west1",
+        "aws_route53_zone_id": "ZJPR9NA6W9M7F",
+        "testnet_name": "natha-0b9944aa-bootstrap-4331",
+        "coda_image":
+          "codaprotocol/coda-daemon-puppeteered:1.0.0-int-test-ci-jobs",
+        "coda_agent_image": "codaprotocol/coda-user-agent:0.1.5",
+        "coda_bots_image": "codaprotocol/coda-bots:0.0.13-beta-1",
+        "coda_points_image": "codaprotocol/coda-points-hack:32b.4",
+        "coda_archive_image": "",
+        "runtime_config":
+          "{\"daemon\":{\"txpool_max_size\":3000},\"genesis\":{\"k\":20,\"delta\":0,\"slots_per_epoch\":480,\"slots_per_sub_window\":2,\"sub_windows_per_window\":2,\"genesis_state_timestamp\":\"2021-03-04 03:31:59.710106Z\"},\"proof\":{\"level\":\"full\"},\"ledger\":{\"accounts\":[{\"pk\":\"B62qjJwgq7kNXYHXQsMeyiMWL7fHsnPeuAiPfYd3yTor3eKpK8VV1gG\",\"balance\":\"1000\"},{\"pk\":\"B62qrbENDJv8qrQ5sJoGhzmA7rxT571StwTzqZ8veiPMh5guLcPQ6XW\",\"balance\":\"1000\"}]}}",
+        "block_producer_configs": [
+          {
+            "name": "test-block-producer-1",
+            "id": "0",
+            "public_key":
+              "B62qjJwgq7kNXYHXQsMeyiMWL7fHsnPeuAiPfYd3yTor3eKpK8VV1gG\n",
+            "private_key":
+              "{\"box_primitive\":\"xsalsa20poly1305\",\"pw_primitive\":\"argon2i\",\"nonce\":\"8mnZCiA6W5GyoBZf5rjY87Z2nJx5xUk67h3HWrt\",\"pwsalt\":\"B3yQP4qogHhQEfNMGiRDNXZEK7nq\",\"pwdiff\":[134217728,6],\"ciphertext\":\"D3UevzNfwSj2CmcNY4P8HHoxzkrJKJTLiaHprfkrBHPC8GecWGguZwWkeAMm4FNBcDYUkhbge\"}",
+            "keypair_secret": "test-keypair-0",
+            "libp2p_secret": ""
+          },
+          {
+            "name": "test-block-producer-2",
+            "id": "1",
+            "public_key":
+              "B62qrbENDJv8qrQ5sJoGhzmA7rxT571StwTzqZ8veiPMh5guLcPQ6XW\n",
+            "private_key":
+              "{\"box_primitive\":\"xsalsa20poly1305\",\"pw_primitive\":\"argon2i\",\"nonce\":\"7GvJdtkqgJtwPB3LiAt8D1uZd3EvjXY5yzTaNzC\",\"pwsalt\":\"A2zXLwtLqib5zFtcnYGkeVMDXvVi\",\"pwdiff\":[134217728,6],\"ciphertext\":\"DoissW9syoUxGWX7kfmtRjGTvhe2yQJad7oeX8We2bGJBGLWsCugMa1fygEDvKgmfSRwigC5C\"}",
+            "keypair_secret": "test-keypair-1",
+            "libp2p_secret": ""
+          }
+        ],
+        "snark_worker_replicas": 0,
+        "snark_worker_fee": "0.025",
+        "snark_worker_public_key":
+          "B62qiy32p8kAKnny8ZFwoMhYpBppM1DWVCqAPBYNcXnsAHhnfAAuXgg"
+      }
+    }
+  }
+]
