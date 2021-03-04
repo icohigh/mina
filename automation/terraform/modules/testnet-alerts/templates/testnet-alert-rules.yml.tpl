@@ -93,7 +93,7 @@ groups:
       testnet: "{{ $labels.testnet }}"
       severity: critical
     annotations:
-      summary: "{{ $labels.testnet }} avg. peer count is critically low"
+      summary: "{{ $labels.testnet }} avg. fill rate is lower than expected"
       description: "Lower fill rate than expected on network {{ $labels.testnet }}."
 
   - alert: NoTransactionsInSeveralBlocks
@@ -149,6 +149,15 @@ groups:
     annotations:
       summary: "{{ $labels.testnet }}: no new transactions seen for 30 minutes."
       description: "No node has received transactions in their transaction pool in the last 30 minutes on network {{ $labels.testnet }}."
+
+  - alert: LowPostgresBlockHeightGrowth
+    expr: avg by (testnet) (increase(Coda_watchdog_postgres_block_height ${rule_filter} [30m])) < 1
+    labels:
+      testnet: "{{ $labels.testnet }}"
+      severity: critical
+    annotations:
+      summary: "{{ $labels.testnet }}: rate of archival of network blocks in Postgres DB is lower than expected"
+      description: "The rate of new blocks observed by the archive postgres instance is low on network {{ $labels.testnet }}."
 
 - name: Warnings
   rules:
