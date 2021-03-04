@@ -1,5 +1,5 @@
 #!/bin/bash
-set -o pipefail
+set -o pipefail -x
 
 TEST_NAME="$1"
 CODA_IMAGE="gcr.io/o1labs-192920/coda-daemon-puppeteered:$CODA_VERSION-$CODA_GIT_HASH"
