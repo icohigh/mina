@@ -22,7 +22,13 @@ module Node = struct
         base_kube_cmd base_kube_cmd node.pod_id cmd
     in
     let%bind cwd = Unix.getcwd () in
-    let%map _ = Cmd_util.run_cmd_exn cwd "sh" ["-c"; kubectl_cmd] in
+    let%map output = Cmd_util.run_cmd_exn cwd "sh" ["-c"; kubectl_cmd] in
+    [%log' info (Logger.create ())]
+      "Output from running \"$cmd\" on $node: \"$output\""
+      ~metadata:
+        [ ("node", `String node.pod_id)
+        ; ("cmd", `String kubectl_cmd)
+        ; ("output", `String output) ] ;
     ()
 
   let start ~fresh_state node : unit Malleable_error.t =
@@ -37,7 +43,9 @@ module Node = struct
       (run_in_container node "./start.sh")
 
   let stop node =
-    Deferred.bind ~f:Malleable_error.return (run_in_container node "./stop.sh")
+    let%bind () = run_in_container node "ps aux" in
+    let%bind () = run_in_container node "./stop.sh" in
+    Malleable_error.return ()
 
   module Decoders = Graphql_lib.Decoders
 
