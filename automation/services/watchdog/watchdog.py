@@ -32,12 +32,20 @@ def main():
   recent_google_bucket_blocks = Gauge('Coda_watchdog_recent_google_bucket_blocks', 'Description of gauge') 
   seeds_reachable = Gauge('Coda_watchdog_seeds_reachable', 'Description of gauge')
 
+  postgres_block_height = Gauge(
+    'Coda_watchdog_postgres_block_height',
+    'Maximum observed block height within a Mina blockchain archive postgres datastore.',
+    # telemetry labels to be included with each set
+    ["host"]
+  )
+
   # ========================================================================
 
   fns = [
     ( lambda: metrics.collect_cluster_crashes(v1, namespace, cluster_crashes), 30*60 ),
     ( lambda: metrics.collect_telemetry_metrics(v1, namespace, nodes_synced_near_best_tip, nodes_synced, prover_errors), 60*60 ),
     ( lambda: metrics.check_seed_list_up(v1, namespace, seeds_reachable), 60*60 ),
+    ( lambda: metrics.collect_postgres_block_height(v1, namespace, postgres_block_height), 60*60 )
   ]
 
   if os.environ.get('CHECK_GCLOUD_STORAGE_BUCKET') is not None:

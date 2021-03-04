@@ -12,6 +12,7 @@ import time
 import json
 import urllib.request
 import ast
+import psycopg2
 
 from google.cloud import storage
 
@@ -89,3 +90,20 @@ def check_seed_list_up(v1, namespace, seeds_reachable):
 
 # ========================================================================
 
+def collect_postgres_block_height(v1, namespace, postgres_block_height):
+  print('Collecting observed postgres block heights...')
+
+  pods = v1.list_namespaced_pod(namespace, watch=False)
+  postgres_pods = [ p for p in pods.to_dict()['items'] if 'postgres' in p['metadata']['name'] ]
+
+  for postgres in postgres_pods:
+    container = next(c for c in postgres['spec']['containers'] if 'postgresql' in c['name'])
+    host = container['name']
+    port = next(e['value'] for e in container['env'] if e['name'] == "POSTGRESQL_PORT_NUMBER")
+
+    with psycopg2.connect(host=host, port=port, database="archive", user="postgres", password="foobar") as conn:
+      cur = conn.cursor()
+      cur.execute('SELECT height FROM blocks ORDER BY height DESC LIMIT 1')
+      block_height = cur.fetchone()
+
+      postgres_block_height.labels({"host" : host}).set(int(block_height))

@@ -9,3 +9,4 @@ click
 timedelta
 prometheus-client
 google-cloud-storage
+psycopg2
