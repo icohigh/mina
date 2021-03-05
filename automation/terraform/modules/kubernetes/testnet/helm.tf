@@ -113,4 +113,3 @@ resource "helm_release" "watchdog" {
   timeout    = 600
   depends_on = [helm_release.seeds]
 }
-
