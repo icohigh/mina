@@ -45,6 +45,7 @@ module Node = struct
   let stop node =
     let%bind () = run_in_container node "ps aux" in
     let%bind () = run_in_container node "./stop.sh" in
+    let%bind () = run_in_container node "ps aux" in
     Malleable_error.return ()
 
   module Decoders = Graphql_lib.Decoders
