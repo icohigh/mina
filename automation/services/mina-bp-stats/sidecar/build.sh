@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+BUILDDIR="deb_build"
+
+rm -rf "${BUILDDIR}"
+rm -rf *.deb
+
+mkdir -p "${BUILDDIR}/DEBIAN"
+
+cat << EOF > "${BUILDDIR}/DEBIAN/control"
+Package: mina-bp-stats-sidecar
+Version: 1.0
+License: Apache-2.0
+Vendor: none
+Architecture: all
+Maintainer: o(1)Labs <build@o1labs.org>
+Installed-Size:
+Depends: python3, python3-certifi
+Section: base
+Priority: optional
+Homepage: https://minaprotocol.com/
+Description: A telemetry sidecar that ships stats about node status
+ back to Mina HQ for analysis.
+ Built from ${GITHASH} by ${BUILD_URL}
+EOF
+
+mkdir -p "${BUILDDIR}/usr/local/bin"
+mkdir -p "${BUILDDIR}/etc"
+mkdir -p "${BUILDDIR}/etc/systemd/system/"
+
+cp ./sidecar.py "${BUILDDIR}/usr/local/bin/mina-bp-stats-sidecar"
+cp ./mina-sidecar-example.json "${BUILDDIR}/etc/mina-sidecar.json"
+cp ./mina-bp-stats-sidecar.service "${BUILDDIR}/etc/systemd/system/"
+
+dpkg-deb --build "${BUILDDIR}" mina-bp-stats-sidecar.deb
