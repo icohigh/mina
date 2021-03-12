@@ -2,7 +2,7 @@
 
 This is a simple sidecar that communicates with Mina nodes to ship off uptime data for analysis.
 
-Unless you're a founding block producer, you shouldn't need to run this sidecar.
+Unless you're a founding block producer, you shouldn't need to run this sidecar, and you'll need to talk with the Mina team to get a special URL to make it work properly.
 
 ## Configuration
 
@@ -27,28 +27,42 @@ The mina metrics sidecar will also look at `/etc/mina-sidecar.json` for its conf
 The `uploadURL` parameter should be given to you by the Mina engineers
 
 ## Running with Docker
-Running in docker should be as straight forward as anything else. The examples below assume you've checked out this repo and run `docker build -t mina-sidecar .` in this folder. 
+Running in docker should be as straight forward as running any other docker image. 
 
-We will likely also be cutting a release to docker hub soon which will likely live at `codaprotocol/mina-sidecar` (subject to change).
+#### Pulling from dockerhub
+We push updates to `minaprotocol/mina-bp-stats-sidecar:latest` so you can simply run the following to pull the image down:
+
+```
+$ docker pull minaprotocol/mina-bp-stats-sidecar:latest
+```
+
+#### Building locally
+This is un-necessary if you use the version from dockerhub (which is recommended).
+
+If you want to build this image yourself though, you can run `docker build -t mina-sidecar .` in this folder to build the image while naming it "mina-sidecar". 
+
+You should then substitute that in lieu of `minaprotocol/mina-bp-stats-sidecar:latest` for the rest of the commands below.
 
 #### Running with envars
 ```bash
-$ docker run --rm -it -e MINA_BP_UPLOAD_URL=https://some-url-here -e MINA_NODE_URL=https://localhost:4321 mina-sidecar
+$ docker run --rm -it -e MINA_BP_UPLOAD_URL=https://some-url-here -e MINA_NODE_URL=https://localhost:4321 minaprotocol/mina-bp-stats-sidecar:latest
 ```
 
 #### Running with a config file
 ```bash
-$ docker run --rm -it -v $(pwd)/mina-sidecar.json:/etc/mina-sidecar.json mina-sidecar
+$ docker run --rm -it -v $(pwd)/mina-sidecar.json:/etc/mina-sidecar.json minaprotocol/mina-bp-stats-sidecar:latest
 ```
 #### You can even bake your own docker image with the config file already in it
 ```bash
-# Custom Docker Image
-$ echo '{"uploadURL": "https://some-url-here", "nodeURL": "https://localhost:4321"}' > your_custom_config.conf
+# Copy the example and make edits
+$ cp mina-sidecar-example.json mina-sidecar.json
+$ vim mina-sidecar.json # Make edits to the config
+# Create custom Dockerfile
 $ cat <<EOF > Dockerfile.custom
-FROM codaprotocol/mina-sidecar
+FROM minaprotocol/mina-bp-stats-sidecar:latest
 COPY your_custom_config.conf /etc/mina-sidecar.json
 EOF
-$ docker build -t your-custom-sidecar .
+$ docker build -t your-custom-sidecar -f Dockerfile.custom .
 $ docker run --rm -it your-custom-sidecar
 ```
 
