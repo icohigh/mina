@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-BUILDDIR="deb_build"
+BUILDDIR="${BUILDDIR:-deb_build}"
 
 rm -rf "${BUILDDIR}"
-rm -rf *.deb
 
 mkdir -p "${BUILDDIR}/DEBIAN"
 
@@ -32,4 +31,6 @@ cp ./sidecar.py "${BUILDDIR}/usr/local/bin/mina-bp-stats-sidecar"
 cp ./mina-sidecar-example.json "${BUILDDIR}/etc/mina-sidecar.json"
 cp ./mina-bp-stats-sidecar.service "${BUILDDIR}/etc/systemd/system/"
 
-dpkg-deb --build "${BUILDDIR}" mina-bp-stats-sidecar.deb
+fakeroot dpkg-deb --build "${BUILDDIR}" mina-bp-stats-sidecar.deb
+
+rm -rf "${BUILDDIR}"
