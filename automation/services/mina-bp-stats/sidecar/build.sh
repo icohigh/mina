@@ -2,6 +2,9 @@
 
 BUILDDIR="${BUILDDIR:-deb_build}"
 
+# Get CWD if run locally or run through "source"
+CURRENT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 rm -rf "${BUILDDIR}"
 
 mkdir -p "${BUILDDIR}/DEBIAN"
@@ -27,9 +30,9 @@ mkdir -p "${BUILDDIR}/usr/local/bin"
 mkdir -p "${BUILDDIR}/etc"
 mkdir -p "${BUILDDIR}/etc/systemd/system/"
 
-cp ./sidecar.py "${BUILDDIR}/usr/local/bin/mina-bp-stats-sidecar"
-cp ./mina-sidecar-example.json "${BUILDDIR}/etc/mina-sidecar.json"
-cp ./mina-bp-stats-sidecar.service "${BUILDDIR}/etc/systemd/system/"
+cp "${CURRENT_DIR}/sidecar.py" "${BUILDDIR}/usr/local/bin/mina-bp-stats-sidecar"
+cp "${CURRENT_DIR}/mina-sidecar-example.json" "${BUILDDIR}/etc/mina-sidecar.json"
+cp "${CURRENT_DIR}/mina-bp-stats-sidecar.service" "${BUILDDIR}/etc/systemd/system/mina-bp-stats-sidecar.service"
 
 fakeroot dpkg-deb --build "${BUILDDIR}" mina-bp-stats-sidecar.deb
 

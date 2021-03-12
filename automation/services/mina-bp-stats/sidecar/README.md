@@ -134,3 +134,21 @@ If you want to get logs from the sidecar service, you can use `journalctl`:
 # Similar to "tail -f" for the sidecar service
 $ journalctl -f -u mina-bp-stats-sidecar.service
 ```
+
+## Issues
+
+#### HTTP error 400 
+
+If you get a 400 while running your sidecar:
+
+```
+INFO:root:Fetching block 2136...
+INFO:root:Got block data
+ERROR:root:HTTP Error 400: Bad Request
+
+-- TRACEBACK --
+
+ERROR:root:Sleeping for 30s and trying again
+```
+
+It likely means you're shipping off data to the ingest pipeline without any block producer key configured on your Mina node - since your BP key is your identity we can't accept node data since we don't know who is submitting it!
